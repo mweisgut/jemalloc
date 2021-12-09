@@ -3137,7 +3137,7 @@ arena_create_metadata_use_hooks_false(tsd_t *tsd,
 	// newp: hook_index
 	// mix of arena_create and arena_i_extent_hooks
 	// TODO(mrcl) impl
-	std::cout << "arena_create_metadata_use_hooks_false called" << std::endl;
+	printf("arena_create_metadata_use_hooks_false called");
 	return 0;
 }
 
