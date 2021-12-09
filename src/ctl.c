@@ -327,6 +327,9 @@ CTL_PROTO(stats_##n##_total_wait_time)					\
 CTL_PROTO(stats_##n##_max_wait_time)					\
 CTL_PROTO(stats_##n##_max_num_thds)
 
+/* Custom */
+CTL_PROTO(experimental_arena_create_metadata_use_hooks_false)
+
 /* Global mutexes. */
 #define OP(mtx) MUTEX_STATS_CTL_PROTO_GEN(mutexes_##mtx)
 MUTEX_PROF_GLOBAL_MUTEXES
@@ -875,6 +878,7 @@ static const ctl_named_node_t experimental_node[] = {
 	{NAME("utilization"),	CHILD(named, experimental_utilization)},
 	{NAME("arenas"),	CHILD(indexed, experimental_arenas)},
 	{NAME("arenas_create_ext"),	CTL(experimental_arenas_create_ext)},
+	{NAME("arena_create_metadata_use_hooks_false"),	CTL(experimental_arena_create_metadata_use_hooks_false)},
 	{NAME("prof_recent"),	CHILD(named, experimental_prof_recent)},
 	{NAME("batch_alloc"),	CTL(experimental_batch_alloc)},
 	{NAME("thread"),	CHILD(named, experimental_thread)}
@@ -3119,6 +3123,21 @@ experimental_arenas_create_ext_ctl(tsd_t *tsd,
 	ret = 0;
 label_return:
 	malloc_mutex_unlock(tsd_tsdn(tsd), &ctl_mtx);
+	return ret;
+}
+
+static int
+arena_create_metadata_use_hooks_false(tsd_t *tsd,
+    const size_t *mib, size_t miblen,
+    void *oldp, size_t *oldlenp, void *newp, size_t newlen) {
+	int ret{0};
+	// unsigned arena_ind;
+
+	// oldp: arena_index
+	// newp: hook_index
+	// mix of arena_create and arena_i_extent_hooks
+	// TODO(mrcl) impl
+	std::cout << "arena_create_metadata_use_hooks_false called" << std::endl;
 	return ret;
 }
 
