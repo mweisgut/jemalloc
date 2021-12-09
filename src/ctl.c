@@ -3130,7 +3130,7 @@ static int
 arena_create_metadata_use_hooks_false(tsd_t *tsd,
     const size_t *mib, size_t miblen,
     void *oldp, size_t *oldlenp, void *newp, size_t newlen) {
-	int ret{0};
+	// int ret;
 	// unsigned arena_ind;
 
 	// oldp: arena_index
@@ -3138,7 +3138,7 @@ arena_create_metadata_use_hooks_false(tsd_t *tsd,
 	// mix of arena_create and arena_i_extent_hooks
 	// TODO(mrcl) impl
 	std::cout << "arena_create_metadata_use_hooks_false called" << std::endl;
-	return ret;
+	return 0;
 }
 
 static int
