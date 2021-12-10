@@ -285,9 +285,10 @@ test_arena_create_metadata_use_hooks_false(bool expect_hook_data, bool expect_ho
 
 	extent_hooks_prep();
 
+	auto hooks_ptr = &hooks
 	called_alloc = false;
 	expect_d_eq(mallctl("experimental.arena_create_metadata_use_hooks_false",
-	    (void *)&arena, &sz, (void *)&hooks, sizeof(void *)), 0,
+	    (void *)&arena, &sz, &hooks_ptr, sizeof(hooks_ptr)), 0,
 	    "Unexpected mallctl() failure");
 	expect_b_eq(called_alloc, expect_hook_metadata,
 	    "expected hook metadata alloc mismatch");
