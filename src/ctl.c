@@ -3128,15 +3128,30 @@ static int
 experimental_arena_create_metadata_use_hooks_false_ctl(tsd_t *tsd,
     const size_t *mib, size_t miblen,
     void *oldp, size_t *oldlenp, void *newp, size_t newlen) {
-	// int ret;
-	// unsigned arena_ind;
+	// oldp: static_cast<void *>(&_arena_index)
+	// oldlenp: &sz
+	// newp: &hooks_ptr
+	// newlen: sizeof(hooks_ptr)
+	printf("[jemalloc] arena_create_metadata_use_hooks_false called\n");
+	int ret;
+	unsigned arena_ind;
 
-	// oldp: arena_index
-	// newp: hook_index
-	// mix of arena_create and arena_i_extent_hooks
-	// TODO(mrcl) impl
-	printf("arena_create_metadata_use_hooks_false called");
-	return 0;
+	malloc_mutex_lock(tsd_tsdn(tsd), &ctl_mtx);
+
+	VERIFY_READ(unsigned);
+	arena_config_t config = arena_config_default;
+	config.metadata_use_hooks = false;
+	WRITE(config.extent_hooks, extent_hooks_t *);
+	if ((arena_ind = ctl_arena_init(tsd, &config)) == UINT_MAX) {
+		ret = EAGAIN;
+		goto label_return;
+	}
+	READ(arena_ind, unsigned);
+
+	ret = 0;
+label_return:
+	malloc_mutex_unlock(tsd_tsdn(tsd), &ctl_mtx);
+	return ret;
 }
 
 static int
