@@ -317,6 +317,7 @@ CTL_PROTO(experimental_prof_recent_alloc_max)
 CTL_PROTO(experimental_prof_recent_alloc_dump)
 CTL_PROTO(experimental_batch_alloc)
 CTL_PROTO(experimental_arenas_create_ext)
+CTL_PROTO(experimental_arena_create_metadata_use_hooks_false)
 
 #define MUTEX_STATS_CTL_PROTO_GEN(n)					\
 CTL_PROTO(stats_##n##_num_ops)						\
@@ -326,9 +327,6 @@ CTL_PROTO(stats_##n##_num_owner_switch)					\
 CTL_PROTO(stats_##n##_total_wait_time)					\
 CTL_PROTO(stats_##n##_max_wait_time)					\
 CTL_PROTO(stats_##n##_max_num_thds)
-
-/* Custom */
-CTL_PROTO(experimental_arena_create_metadata_use_hooks_false)
 
 /* Global mutexes. */
 #define OP(mtx) MUTEX_STATS_CTL_PROTO_GEN(mutexes_##mtx)
@@ -3127,7 +3125,7 @@ label_return:
 }
 
 static int
-arena_create_metadata_use_hooks_false(tsd_t *tsd,
+experimental_arena_create_metadata_use_hooks_false_ctl(tsd_t *tsd,
     const size_t *mib, size_t miblen,
     void *oldp, size_t *oldlenp, void *newp, size_t newlen) {
 	// int ret;
