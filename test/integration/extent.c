@@ -277,11 +277,50 @@ TEST_BEGIN(test_arenas_create_ext_with_ehooks_with_metadata) {
 }
 TEST_END
 
+static void
+test_arena_create_metadata_use_hooks_false(bool expect_hook_data, bool expect_hook_metadata) {
+	unsigned arena, arena1;
+	void *ptr;
+	size_t sz = sizeof(unsigned);
+
+	extent_hooks_prep();
+
+	called_alloc = false;
+	expect_d_eq(mallctl("experimental.arena_create_metadata_use_hooks_false",
+	    (void *)&arena, &sz, (void *)&hooks, sizeof(void *)), 0,
+	    "Unexpected mallctl() failure");
+	expect_b_eq(called_alloc, expect_hook_metadata,
+	    "expected hook metadata alloc mismatch");
+
+	called_alloc = false;
+	ptr = mallocx(42, MALLOCX_ARENA(arena) | MALLOCX_TCACHE_NONE);
+	expect_b_eq(called_alloc, expect_hook_data,
+	    "expected hook data alloc mismatch");
+
+	expect_ptr_not_null(ptr, "Unexpected mallocx() failure");
+	expect_d_eq(mallctl("arenas.lookup", &arena1, &sz, &ptr, sizeof(ptr)),
+	    0, "Unexpected mallctl() failure");
+	expect_u_eq(arena, arena1, "Unexpected arena index");
+	dallocx(ptr, 0);
+}
+
+TEST_BEGIN(test_arena_create_metadata_use_hooks_false_with_ehooks_no_metadata) {
+	test_arena_create_metadata_use_hooks_false(true, false);
+}
+TEST_END
+
+TEST_BEGIN(test_arena_create_metadata_use_hooks_false_with_ehooks_with_metadata) {
+	test_arena_create_metadata_use_hooks_false(true, true);
+}
+TEST_END
+
 int
 main(void) {
 	return test(
 	    test_extent_manual_hook,
 	    test_extent_auto_hook,
 	    test_arenas_create_ext_with_ehooks_no_metadata,
-	    test_arenas_create_ext_with_ehooks_with_metadata);
+	    test_arenas_create_ext_with_ehooks_with_metadata,
+	    test_arena_create_metadata_use_hooks_false_with_ehooks_no_metadata,
+	    test_arena_create_metadata_use_hooks_false_with_ehooks_with_metadata);
 }
