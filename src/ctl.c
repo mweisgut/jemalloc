@@ -3132,7 +3132,6 @@ experimental_arena_create_metadata_use_hooks_false_ctl(tsd_t *tsd,
 	// oldlenp: &sz
 	// newp: &hooks_ptr
 	// newlen: sizeof(hooks_ptr)
-	printf("[jemalloc] arena_create_metadata_use_hooks_false called\n");
 	int ret;
 	unsigned arena_ind;
 
