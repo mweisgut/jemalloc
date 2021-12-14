@@ -192,14 +192,16 @@ ehooks_alloc(tsdn_t *tsdn, ehooks_t *ehooks, void *new_addr, size_t size,
     size_t alignment, bool *zero, bool *commit) {
 	bool orig_zero = *zero;
 	void *ret;
+	print("ehooks_alloc\n");
 	extent_hooks_t *extent_hooks = ehooks_get_extent_hooks_ptr(ehooks);
 	if (extent_hooks == &ehooks_default_extent_hooks) {
 		ret = ehooks_default_alloc_impl(tsdn, new_addr, size,
 		    alignment, zero, commit, ehooks_ind_get(ehooks));
 	} else {
+		printf("extent_hooks != &ehooks_default_extent_hooks\n");
 		ehooks_pre_reentrancy(tsdn);
-		printf("%s", extent_hooks == NULL ? "extent_hooks is null" : "extent_hooks not null");
-		printf("%s", extent_hooks->alloc == NULL ? "extent_hooks->alloc is null" : "extent_hooks->alloc not null");
+		printf("%s\n", extent_hooks == NULL ? "extent_hooks is null" : "extent_hooks not null");
+		printf("%s\n", extent_hooks->alloc == NULL ? "extent_hooks->alloc is null" : "extent_hooks->alloc not null");
 		ret = extent_hooks->alloc(extent_hooks, new_addr, size,
 		    alignment, zero, commit, ehooks_ind_get(ehooks));
 		ehooks_post_reentrancy(tsdn);
