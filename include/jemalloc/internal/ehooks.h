@@ -192,7 +192,7 @@ ehooks_alloc(tsdn_t *tsdn, ehooks_t *ehooks, void *new_addr, size_t size,
     size_t alignment, bool *zero, bool *commit) {
 	bool orig_zero = *zero;
 	void *ret;
-	print("ehooks_alloc\n");
+	printf("ehooks_alloc\n");
 	extent_hooks_t *extent_hooks = ehooks_get_extent_hooks_ptr(ehooks);
 	if (extent_hooks == &ehooks_default_extent_hooks) {
 		ret = ehooks_default_alloc_impl(tsdn, new_addr, size,
