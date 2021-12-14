@@ -277,25 +277,24 @@ TEST_BEGIN(test_arenas_create_ext_with_ehooks_with_metadata) {
 }
 TEST_END
 
-static void
-test_arena_create_metadata_use_hooks_false(bool expect_hook_data, bool expect_hook_metadata) {
+TEST_BEGIN(test_arena_create_metadata_use_hooks_false) {
 	unsigned arena, arena1;
 	void *ptr;
 	size_t sz = sizeof(unsigned);
 
 	extent_hooks_prep();
 
-	auto hooks_ptr = &hooks
+	extent_hooks_t* hooks_ptr = &hooks;
 	called_alloc = false;
 	expect_d_eq(mallctl("experimental.arena_create_metadata_use_hooks_false",
 	    (void *)&arena, &sz, &hooks_ptr, sizeof(hooks_ptr)), 0,
 	    "Unexpected mallctl() failure");
-	expect_b_eq(called_alloc, expect_hook_metadata,
+	expect_b_eq(called_alloc, false,
 	    "expected hook metadata alloc mismatch");
 
 	called_alloc = false;
 	ptr = mallocx(42, MALLOCX_ARENA(arena) | MALLOCX_TCACHE_NONE);
-	expect_b_eq(called_alloc, expect_hook_data,
+	expect_b_eq(called_alloc, true,
 	    "expected hook data alloc mismatch");
 
 	expect_ptr_not_null(ptr, "Unexpected mallocx() failure");
@@ -303,15 +302,6 @@ test_arena_create_metadata_use_hooks_false(bool expect_hook_data, bool expect_ho
 	    0, "Unexpected mallctl() failure");
 	expect_u_eq(arena, arena1, "Unexpected arena index");
 	dallocx(ptr, 0);
-}
-
-TEST_BEGIN(test_arena_create_metadata_use_hooks_false_with_ehooks_no_metadata) {
-	test_arena_create_metadata_use_hooks_false(true, false);
-}
-TEST_END
-
-TEST_BEGIN(test_arena_create_metadata_use_hooks_false_with_ehooks_with_metadata) {
-	test_arena_create_metadata_use_hooks_false(true, true);
 }
 TEST_END
 
@@ -322,6 +312,5 @@ main(void) {
 	    test_extent_auto_hook,
 	    test_arenas_create_ext_with_ehooks_no_metadata,
 	    test_arenas_create_ext_with_ehooks_with_metadata,
-	    test_arena_create_metadata_use_hooks_false_with_ehooks_no_metadata,
-	    test_arena_create_metadata_use_hooks_false_with_ehooks_with_metadata);
+	    test_arena_create_metadata_use_hooks_false);
 }
